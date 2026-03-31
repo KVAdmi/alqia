@@ -45,7 +45,10 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   cursor: none;
+  display: flex; flex-direction: column;
+  min-height: 100vh;
 }
+#spa-root { flex: 1; }
 h1,h2,h3,h4 { font-family: 'Questrial', system-ui, sans-serif; line-height: 1.1; }
 p { line-height: 1.7; color: var(--c-gray); }
 a { text-decoration: none; color: inherit; }
@@ -167,11 +170,14 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 #spa-root { position: relative; z-index: 1; }
 .view {
   display: none;
-  min-height: 100vh;
   padding-top: var(--nav-h);
   opacity: 0;
   transform: translateY(18px);
   transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+/* Solo el home ocupa pantalla completa */
+#view-home {
+  min-height: 100vh;
 }
 .view.active {
   display: block;
@@ -194,10 +200,11 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 ───────────────────────────────────────── */
 #nodesCanvas {
   position: fixed;
-  inset: 0;
-  width: 100%; height: 100%;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   z-index: 0;
   pointer-events: none;
+  display: block;
 }
 
 .orb {
@@ -256,7 +263,7 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 .hero-right {
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  width: clamp(320px, 44vw, 580px);
+  width: clamp(380px, 48vw, 620px);
 }
 .hero-logo-img {
   width: 100%;

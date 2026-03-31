@@ -208,9 +208,6 @@
   }, { passive: true });
 
   /* ─────────────────────────────────────────
-     NODOS TECH — canvas hero
-  ───────────────────────────────────────── */
-  /* ─────────────────────────────────────────
      NODOS TECH — canvas global (todas las páginas)
   ───────────────────────────────────────── */
   function initNodes() {
@@ -218,22 +215,20 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    const MAX_DIST = 120;  // distancia máxima de conexión — más corta = menos telaraña
+    const MAX_DIST = 120;
     const SPEED    = 0.3;
     let W, H, nodes;
 
-    // Distribuye nodos en una cuadrícula con jitter para que queden uniformes
     function init() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
 
-      // Calcula cuántos nodos caben según el área (1 cada ~18000px²)
-      const area    = W * H;
-      const count   = Math.round(area / 18000);
-      const NODES   = Math.max(18, Math.min(count, 55)); // entre 18 y 55
+      const area  = W * H;
+      const count = Math.round(area / 18000);
+      const NODES = Math.max(18, Math.min(count, 55));
 
-      const cols = Math.ceil(Math.sqrt(NODES * W / H));
-      const rows = Math.ceil(NODES / cols);
+      const cols  = Math.ceil(Math.sqrt(NODES * W / H));
+      const rows  = Math.ceil(NODES / cols);
       const cellW = W / cols;
       const cellH = H / rows;
 
@@ -243,7 +238,6 @@
           if (nodes.length >= NODES) break;
           const isOrange = Math.random() < 0.1;
           nodes.push({
-            // posición base centrada en la celda + jitter de hasta 30%
             x:      (c + 0.5 + (Math.random() - .5) * 0.6) * cellW,
             y:      (r + 0.5 + (Math.random() - .5) * 0.6) * cellH,
             vx:     (Math.random() - .5) * SPEED,
@@ -258,7 +252,6 @@
     function draw() {
       ctx.clearRect(0, 0, W, H);
 
-      // Líneas
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx   = nodes[i].x - nodes[j].x;
@@ -279,7 +272,6 @@
         }
       }
 
-      // Puntos
       nodes.forEach(n => {
         if (n.orange) {
           ctx.shadowColor = 'rgba(249,128,88,0.7)';
@@ -313,7 +305,7 @@
       requestAnimationFrame(loop);
     }
 
-    window.addEventListener('resize', () => { init(); }, { passive: true });
+    window.addEventListener('resize', init, { passive: true });
     init();
     loop();
   }
