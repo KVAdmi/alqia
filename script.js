@@ -208,7 +208,7 @@
   }, { passive: true });
 
   /* ─────────────────────────────────────────
-     CURSOR TRIANGULAR 3D
+     CURSOR — esfera naranja
   ───────────────────────────────────────── */
   function initCursor() {
     const el = document.getElementById('cursor');
@@ -217,19 +217,14 @@
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
     let cx = mx, cy = my;
-    let raf;
 
-    // Seguimiento suave con lerp
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function loop() {
-      cx = lerp(cx, mx, 0.14);
-      cy = lerp(cy, my, 0.14);
+      cx = lerp(cx, mx, 0.12);
+      cy = lerp(cy, my, 0.12);
       el.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
-      // Rotar el triángulo levemente según velocidad horizontal
-      const angle = (mx - cx) * 0.4;
-      el.querySelector('svg').style.transform = `rotate(${angle}deg)`;
-      raf = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
 
     window.addEventListener('mousemove', (e) => {
@@ -237,26 +232,16 @@
       my = e.clientY;
     }, { passive: true });
 
-    // Hover en elementos interactivos → escala el cursor
-    const hoverTargets = 'a, button, [data-nav], .nav-link, .stat-item, .svc-card, .pillar, .xpill, .phil-card';
+    const hoverTargets = 'a, button, [data-nav], .nav-link, .stat-item, .svc-card, .pillar, .xpill, .phil-card, .mobile-nav-link';
     document.addEventListener('mouseover', (e) => {
-      if (e.target.closest(hoverTargets)) {
-        document.body.classList.add('cursor-hover');
-      }
+      if (e.target.closest(hoverTargets)) document.body.classList.add('cursor-hover');
     });
     document.addEventListener('mouseout', (e) => {
-      if (e.target.closest(hoverTargets)) {
-        document.body.classList.remove('cursor-hover');
-      }
+      if (e.target.closest(hoverTargets)) document.body.classList.remove('cursor-hover');
     });
 
-    // Click — pequeño squish
-    document.addEventListener('mousedown', () => {
-      el.querySelector('svg').style.transform += ' scale(0.8)';
-    });
-    document.addEventListener('mouseup', () => {
-      el.querySelector('svg').style.transform = '';
-    });
+    document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+    document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-click'));
 
     loop();
   }

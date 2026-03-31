@@ -61,7 +61,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 }
 
 /* ─────────────────────────────────────────
-   CURSOR TRIANGULAR 3D NARANJA
+   CURSOR — esfera naranja
 ───────────────────────────────────────── */
 #cursor {
   position: fixed;
@@ -69,22 +69,32 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform .08s ease-out;
-  width: 28px; height: 28px;
+  will-change: transform;
 }
-#cursor svg {
-  width: 28px; height: 28px;
-  display: block;
-  filter: drop-shadow(0 2px 6px rgba(249,128,88,.7))
-          drop-shadow(0 0 16px rgba(249,128,88,.4));
-  transition: transform .15s ease, filter .15s ease;
+.cur-sphere {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%,
+    #ffb899 0%,
+    #F98058 45%,
+    #c05a2e 100%);
+  box-shadow:
+    0 0 12px rgba(249,128,88,.55),
+    0 0 28px rgba(249,128,88,.25),
+    inset 0 -3px 6px rgba(0,0,0,.25);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
 }
-body.cursor-hover #cursor svg {
-  transform: scale(1.35);
-  filter: drop-shadow(0 4px 12px rgba(249,128,88,.9))
-          drop-shadow(0 0 28px rgba(249,128,88,.6));
+body.cursor-hover .cur-sphere {
+  transform: scale(1.7);
+  box-shadow:
+    0 0 20px rgba(249,128,88,.75),
+    0 0 44px rgba(249,128,88,.35),
+    inset 0 -3px 6px rgba(0,0,0,.2);
 }
-/* Elementos clicables restauran cursor none también */
+body.cursor-click .cur-sphere {
+  transform: scale(0.75);
+}
+/* Elementos clicables */
 a, button, [data-nav], [role="button"] { cursor: none; }
 
 /* ─────────────────────────────────────────
