@@ -70,9 +70,11 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
   z-index: 9999;
   transform: translate(-50%, -50%);
   transition: transform .08s ease-out;
+  width: 28px; height: 28px;
 }
 #cursor svg {
   width: 28px; height: 28px;
+  display: block;
   filter: drop-shadow(0 2px 6px rgba(249,128,88,.7))
           drop-shadow(0 0 16px rgba(249,128,88,.4));
   transition: transform .15s ease, filter .15s ease;
