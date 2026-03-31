@@ -15,8 +15,8 @@
    TOKENS
 ───────────────────────────────────────── */
 :root {
-  --c-bg:        #0D1014;
-  --c-surface:   #22303E;
+  --c-bg:        #22303E;
+  --c-surface:   #1a2530;
   --c-orange:    #F98058;
   --c-gray:      #ACB9BE;
   --c-light:     #F2F9FC;
@@ -193,25 +193,32 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 .hero-ambient {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
 }
+
+/* Canvas de nodos */
+#nodesCanvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+
 .orb {
   position: absolute; border-radius: 50%;
   filter: blur(90px);
 }
 .orb-1 {
   width: 560px; height: 560px;
-  background: radial-gradient(circle, rgba(249,128,88,.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(249,128,88,.13) 0%, transparent 70%);
   right: -80px; top: -120px;
   animation: orbFloat 9s ease-in-out infinite;
 }
 .orb-2 {
   width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(34,48,62,.9) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(34,48,62,.6) 0%, transparent 70%);
   left: 5%; bottom: 10%;
   animation: orbFloat 13s ease-in-out infinite reverse;
 }
 .orb-3 {
   width: 260px; height: 260px;
-  background: radial-gradient(circle, rgba(249,128,88,.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(249,128,88,.06) 0%, transparent 70%);
   left: 40%; top: 30%;
   animation: orbFloat 7s ease-in-out infinite 2s;
 }
@@ -220,24 +227,31 @@ a, button, [data-nav], [role="button"] { cursor: none; }
   50%      { transform: translateY(-28px) scale(1.04); }
 }
 
-/* Grid sutil */
-.grid-overlay {
+/* Capa frosted — efecto cristal sobre los nodos */
+.frosted-overlay {
   position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(242,249,252,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(242,249,252,.025) 1px, transparent 1px);
-  background-size: 72px 72px;
+  background: linear-gradient(
+    160deg,
+    rgba(34,48,62,.55) 0%,
+    rgba(34,48,62,.20) 40%,
+    rgba(34,48,62,.50) 100%
+  );
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
 }
 
-/* Contenido interior del hero */
+/* Contenido interior del hero — centrado */
 .hero-content {
   position: relative; z-index: 1;
   flex: 1;
-  display: flex; align-items: center; gap: 40px;
+  display: flex; align-items: center; justify-content: center;
   max-width: var(--w); margin: 0 auto; padding: 80px 32px 40px;
   width: 100%;
 }
-.hero-left { flex: 1; min-width: 0; }
+.hero-left {
+  flex: 1; min-width: 0;
+  max-width: 720px;
+}
 
 /* Badge */
 .hero-badge {
@@ -309,62 +323,6 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 .btn-ghost:hover {
   border-color: var(--c-orange-20);
   background: var(--c-orange-05);
-}
-
-/* ─────────────────────────────────────────
-   ORBITAL VISUAL  →  icono hero
-───────────────────────────────────────── */
-.hero-right {
-  width: 460px; max-width: 46%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-.hero-logo-wrap {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-  width: 100%;
-}
-
-/* Luz orbital que gira alrededor del icono */
-.hero-logo-wrap::before {
-  content: '';
-  position: absolute;
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(249,128,88,.22) 0%, transparent 65%);
-  filter: blur(32px);
-  animation: lightOrbit 9s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-/* Sombra proyectada en la base */
-.hero-logo-wrap::after {
-  content: '';
-  position: absolute;
-  width: 55%; height: 18%;
-  bottom: -6%;
-  left: 22%;
-  background: radial-gradient(ellipse, rgba(0,0,0,.6) 0%, transparent 70%);
-  filter: blur(18px);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-@keyframes lightOrbit {
-  0%   { transform: translate(90px,  0px);   }
-  25%  { transform: translate(0px,  -80px);  }
-  50%  { transform: translate(-90px, 0px);   }
-  75%  { transform: translate(0px,   80px);  }
-  100% { transform: translate(90px,  0px);   }
-}
-
-.hero-logo-img {
-  position: relative; z-index: 1;
-  width: clamp(220px, 32vw, 400px);
-  height: auto;
-  display: block;
-  filter: drop-shadow(-8px 16px 32px rgba(0,0,0,.65))
-          drop-shadow(4px 4px 12px rgba(0,0,0,.4));
 }
 
 /* ─────────────────────────────────────────
@@ -710,16 +668,10 @@ h4 {
   .hero-content {
     flex-direction: column-reverse;
     padding: 80px 24px 32px;
-    gap: 32px;
     align-items: center;
     text-align: center;
   }
-  .hero-right {
-    width: 100%; max-width: 100%;
-    justify-content: center;
-  }
-  .hero-logo-img { width: clamp(160px, 45vw, 280px); }
-  .hero-left { align-items: center; }
+  .hero-left { align-items: center; max-width: 100%; }
   .hero-badge { justify-content: center; }
   .hero-actions { justify-content: center; }
 
@@ -743,17 +695,13 @@ h4 {
   .nav-inner { gap: 12px; }
   .nav-right { gap: 8px; }
 
-  /* Hero en móvil: logo centrado arriba, texto abajo */
+  /* Hero en móvil: texto centrado */
   .hero-content {
-    flex-direction: column-reverse;
     padding: 72px 20px 24px;
-    gap: 24px;
     align-items: center;
     text-align: center;
   }
-  .hero-right { justify-content: center; }
-  .hero-logo-img { width: clamp(140px, 52vw, 220px); }
-  .hero-logo-wrap::before { width: 120px; height: 120px; }
+  .hero-left { max-width: 100%; }
 
   /* Tipografía hero */
   .hero-headline { font-size: clamp(36px, 10vw, 52px); line-height: 1.1; }
@@ -774,7 +722,6 @@ h4 {
 
   /* Sections internas */
   .page-shell { padding: 48px 20px 64px; }
-  .hero-headline + .hero-sub { margin-top: 12px; }
   .two-col { gap: 32px; }
   .pillar { gap: 12px; }
   .svc-grid { grid-template-columns: 1fr; }
