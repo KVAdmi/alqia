@@ -46,8 +46,29 @@
           <span id="langLabel">ES</span>
         </button>
       </div>
+      <!-- Hamburguesa móvil -->
+      <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+
+  <!-- Menú móvil overlay -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-inner">
+      <a class="mobile-nav-link" data-nav="home"    href="#" data-i18n-mob="home">Home</a>
+      <a class="mobile-nav-link" data-nav="about"   href="#" data-i18n-mob="about">About</a>
+      <a class="mobile-nav-link" data-nav="xoria"   href="#" data-i18n-mob="xoria">Xoria</a>
+      <a class="mobile-nav-link" data-nav="work"    href="#" data-i18n-mob="work">Work</a>
+      <a class="mobile-nav-link" data-nav="contact" href="#" data-i18n-mob="contact">Contact</a>
+      <div class="mobile-menu-footer">
+        <button class="btn-talk" data-nav="contact" data-i18n="nav_cta">Let's talk</button>
+        <button class="lang-toggle" id="langToggleMob" aria-label="Switch language">
+          <span id="langLabelMob">ES</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- SPA ROOT -->
   <main id="spa-root">
@@ -244,6 +265,27 @@
       <span class="footer-copy"><span class="brand-type">Alqia</span> Tech 2025 &copy; All rights reserved &reg;</span>
     </div>
   </footer>
+
+  <!-- CURSOR PERSONALIZADO -->
+  <div id="cursor">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#F98058"/>
+          <stop offset="100%" stop-color="#d4623a"/>
+        </linearGradient>
+        <filter id="cf" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="-1" dy="2" stdDeviation="1.5" flood-color="#F98058" flood-opacity="0.5"/>
+        </filter>
+      </defs>
+      <!-- Triángulo 3D: cara frontal -->
+      <polygon points="2,24 14,2 26,24" fill="url(#cg)" filter="url(#cf)" opacity="0.95"/>
+      <!-- Cara lateral izquierda (efecto 3D) -->
+      <polygon points="2,24 14,2 14,28" fill="#b84f2a" opacity="0.7"/>
+      <!-- Borde superior brillante -->
+      <line x1="14" y1="2" x2="26" y2="24" stroke="#ffc4a8" stroke-width="0.6" opacity="0.5"/>
+    </svg>
+  </div>
 
   <script src="script.js"></script>
 </body>

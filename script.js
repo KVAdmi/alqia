@@ -172,8 +172,8 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 280);
 
-    // Actualizar links activos
-    document.querySelectorAll('.nav-link').forEach(a => {
+    // Actualizar links activos (desktop + móvil)
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(a => {
       a.classList.toggle('active', a.getAttribute('data-nav') === viewId);
     });
 
@@ -208,8 +208,128 @@
   }, { passive: true });
 
   /* ─────────────────────────────────────────
+     CURSOR TRIANGULAR 3D
+  ───────────────────────────────────────── */
+  function initCursor() {
+    const el = document.getElementById('cursor');
+    if (!el) return;
+
+    let mx = window.innerWidth / 2;
+    let my = window.innerHeight / 2;
+    let cx = mx, cy = my;
+    let raf;
+
+    // Seguimiento suave con lerp
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function loop() {
+      cx = lerp(cx, mx, 0.14);
+      cy = lerp(cy, my, 0.14);
+      el.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
+      // Rotar el triángulo levemente según velocidad horizontal
+      const angle = (mx - cx) * 0.4;
+      el.querySelector('svg').style.transform = `rotate(${angle}deg)`;
+      raf = requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+    }, { passive: true });
+
+    // Hover en elementos interactivos → escala el cursor
+    const hoverTargets = 'a, button, [data-nav], .nav-link, .stat-item, .svc-card, .pillar, .xpill, .phil-card';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest(hoverTargets)) {
+        document.body.classList.add('cursor-hover');
+      }
+    });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest(hoverTargets)) {
+        document.body.classList.remove('cursor-hover');
+      }
+    });
+
+    // Click — pequeño squish
+    document.addEventListener('mousedown', () => {
+      el.querySelector('svg').style.transform += ' scale(0.8)';
+    });
+    document.addEventListener('mouseup', () => {
+      el.querySelector('svg').style.transform = '';
+    });
+
+    loop();
+  }
+
+  /* ─────────────────────────────────────────
+     TILT 3D interactivo en el icono del hero
+  ───────────────────────────────────────── */
+  function initIconTilt() {
+    // Sin efecto de tilt — el icono es completamente estático
+  }
+
+  /* ─────────────────────────────────────────
+     HAMBURGUESA — menú móvil
+  ───────────────────────────────────────── */
+  function initMobileMenu() {
+    const burger   = document.getElementById('navBurger');
+    const menu     = document.getElementById('mobileMenu');
+    const mLinks   = document.querySelectorAll('.mobile-nav-link');
+    const langMob  = document.getElementById('langToggleMob');
+    const labelMob = document.getElementById('langLabelMob');
+    if (!burger || !menu) return;
+
+    function openMenu() {
+      burger.classList.add('open');
+      menu.classList.add('open');
+      burger.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      burger.classList.remove('open');
+      menu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    burger.addEventListener('click', () => {
+      menu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    // Cerrar al seleccionar link
+    mLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenu();
+        const target = link.getAttribute('data-nav');
+        if (target) navigate(target);
+      });
+    });
+
+    // Lang toggle duplicado en menú móvil
+    if (langMob) {
+      langMob.addEventListener('click', () => {
+        document.getElementById('langToggle').click();
+        // Sincronizar label
+        setTimeout(() => {
+          if (labelMob) labelMob.textContent = document.getElementById('langLabel').textContent;
+        }, 10);
+      });
+    }
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
+
+  /* ─────────────────────────────────────────
      INICIO
   ───────────────────────────────────────── */
   applyLang('en');
+  initCursor();
+  initIconTilt();
+  initMobileMenu();
 
 })();

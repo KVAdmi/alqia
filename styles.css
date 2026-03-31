@@ -44,6 +44,7 @@ body {
   color: var(--c-light);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  cursor: none;
 }
 h1,h2,h3,h4 { font-family: 'Questrial', system-ui, sans-serif; line-height: 1.1; }
 p { line-height: 1.7; color: var(--c-gray); }
@@ -58,6 +59,31 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
   color: inherit;
   -webkit-text-fill-color: inherit;
 }
+
+/* ─────────────────────────────────────────
+   CURSOR TRIANGULAR 3D NARANJA
+───────────────────────────────────────── */
+#cursor {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform .08s ease-out;
+}
+#cursor svg {
+  width: 28px; height: 28px;
+  filter: drop-shadow(0 2px 6px rgba(249,128,88,.7))
+          drop-shadow(0 0 16px rgba(249,128,88,.4));
+  transition: transform .15s ease, filter .15s ease;
+}
+body.cursor-hover #cursor svg {
+  transform: scale(1.35);
+  filter: drop-shadow(0 4px 12px rgba(249,128,88,.9))
+          drop-shadow(0 0 28px rgba(249,128,88,.6));
+}
+/* Elementos clicables restauran cursor none también */
+a, button, [data-nav], [role="button"] { cursor: none; }
 
 /* ─────────────────────────────────────────
    NAVBAR
@@ -274,7 +300,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
 }
 
 /* ─────────────────────────────────────────
-   ORBITAL VISUAL  →  reemplazado por logo
+   ORBITAL VISUAL  →  icono hero
 ───────────────────────────────────────── */
 .hero-right {
   width: 460px; max-width: 46%; flex-shrink: 0;
@@ -282,13 +308,51 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; }
   position: relative;
 }
 .hero-logo-wrap {
+  position: relative;
   display: flex; align-items: center; justify-content: center;
   width: 100%;
 }
+
+/* Luz orbital que gira alrededor del icono */
+.hero-logo-wrap::before {
+  content: '';
+  position: absolute;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249,128,88,.22) 0%, transparent 65%);
+  filter: blur(32px);
+  animation: lightOrbit 9s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Sombra proyectada en la base */
+.hero-logo-wrap::after {
+  content: '';
+  position: absolute;
+  width: 55%; height: 18%;
+  bottom: -6%;
+  left: 22%;
+  background: radial-gradient(ellipse, rgba(0,0,0,.6) 0%, transparent 70%);
+  filter: blur(18px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes lightOrbit {
+  0%   { transform: translate(90px,  0px);   }
+  25%  { transform: translate(0px,  -80px);  }
+  50%  { transform: translate(-90px, 0px);   }
+  75%  { transform: translate(0px,   80px);  }
+  100% { transform: translate(90px,  0px);   }
+}
+
 .hero-logo-img {
-  width: clamp(220px, 32vw, 420px);
+  position: relative; z-index: 1;
+  width: clamp(220px, 32vw, 400px);
   height: auto;
   display: block;
+  filter: drop-shadow(-8px 16px 32px rgba(0,0,0,.65))
+          drop-shadow(4px 4px 12px rgba(0,0,0,.4));
 }
 
 /* ─────────────────────────────────────────
@@ -571,21 +635,150 @@ h4 {
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
+
+/* ── Hamburguesa (oculta en desktop) ── */
+.nav-burger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: none; border: none; padding: 4px;
+  cursor: none; z-index: 200; flex-shrink: 0;
+}
+.nav-burger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--c-light);
+  border-radius: 2px;
+  transition: transform .3s var(--ease), opacity .2s, width .3s var(--ease);
+  transform-origin: center;
+}
+/* Estado abierto — X */
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; width: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Menú móvil overlay ── */
+.mobile-menu {
+  display: none;
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(13,16,20,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  flex-direction: column; justify-content: center; align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s var(--ease);
+}
+.mobile-menu.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.mobile-menu-inner {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  width: 100%; padding: 0 32px;
+}
+.mobile-nav-link {
+  font-size: 36px; font-weight: 400;
+  color: var(--c-gray); letter-spacing: .5px;
+  padding: 12px 0; width: 100%; text-align: center;
+  border-bottom: 1px solid var(--c-white-04);
+  transition: color .2s;
+}
+.mobile-nav-link:first-child { border-top: 1px solid var(--c-white-04); }
+.mobile-nav-link:hover, .mobile-nav-link.active { color: var(--c-light); }
+.mobile-menu-footer {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; margin-top: 36px;
+}
+
+/* ── Tablet (≤ 960px) ── */
 @media (max-width: 960px) {
-  .hero-content { flex-direction: column; padding: 60px 24px 40px; }
-  .hero-right { width: 100%; max-width: 100%; margin-top: 40px; }
-  .hero-logo-img { width: clamp(180px, 55vw, 300px); }
+  /* Hero: columna — logo arriba, texto abajo */
+  .hero-content {
+    flex-direction: column-reverse;
+    padding: 80px 24px 32px;
+    gap: 32px;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-right {
+    width: 100%; max-width: 100%;
+    justify-content: center;
+  }
+  .hero-logo-img { width: clamp(160px, 45vw, 280px); }
+  .hero-left { align-items: center; }
+  .hero-badge { justify-content: center; }
+  .hero-actions { justify-content: center; }
+
   .two-col { grid-template-columns: 1fr; gap: 40px; }
-  .stats-bar { justify-content: flex-start; }
+  .stats-bar { justify-content: flex-start; flex-wrap: wrap; }
   .stat-sep { display: none; }
-  .stat-item { min-width: 50%; flex: initial; }
+  .stat-item { flex: 0 0 50%; min-width: 0; }
   .page-shell { padding: 60px 24px 80px; }
 }
-@media (max-width: 600px) {
-  .nav-links { display: none; }
-  .hero-headline { font-size: 48px; }
-  .orb-1 { width: 300px; height: 300px; }
-  .hero-actions { flex-direction: column; }
+
+/* ── Móvil (≤ 640px) ── */
+@media (max-width: 640px) {
+  /* Navbar: ocultar links y btn-talk, mostrar hamburguesa */
+  .nav-links   { display: none; }
+  .btn-talk    { display: none; }
+  .nav-burger  { display: flex; }
+  /* Mostrar menú overlay */
+  .mobile-menu { display: flex; }
+
+  /* Nav-inner: brand + lang + burger */
+  .nav-inner { gap: 12px; }
+  .nav-right { gap: 8px; }
+
+  /* Hero en móvil: logo centrado arriba, texto abajo */
+  .hero-content {
+    flex-direction: column-reverse;
+    padding: 72px 20px 24px;
+    gap: 24px;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-right { justify-content: center; }
+  .hero-logo-img { width: clamp(140px, 52vw, 220px); }
+  .hero-logo-wrap::before { width: 120px; height: 120px; }
+
+  /* Tipografía hero */
+  .hero-headline { font-size: clamp(36px, 10vw, 52px); line-height: 1.1; }
+  .hero-sub { font-size: 14px; }
+  .hero-badge { font-size: 11px; }
+
+  /* Botones hero full-width */
+  .hero-actions { flex-direction: column; width: 100%; }
   .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
-  .stat-item { min-width: 100%; }
+
+  /* Stats bar: una por fila */
+  .stat-item { flex: 0 0 100%; }
+  .stats-bar { gap: 8px; }
+
+  /* Orbs reducidos */
+  .orb-1 { width: 240px; height: 240px; }
+  .orb-2 { width: 180px; height: 180px; }
+
+  /* Sections internas */
+  .page-shell { padding: 48px 20px 64px; }
+  .hero-headline + .hero-sub { margin-top: 12px; }
+  .two-col { gap: 32px; }
+  .pillar { gap: 12px; }
+  .svc-grid { grid-template-columns: 1fr; }
+
+  /* Xoria en móvil */
+  .xoria-two-col { grid-template-columns: 1fr; gap: 32px; min-height: auto; }
+  .xoria-logo-wrap { order: 1; display: flex; justify-content: center; }
+  .xoria-text { order: 2; }
+  .xoria-logo { width: clamp(140px, 55vw, 220px); }
+  .xoria-h2 { font-size: clamp(36px, 10vw, 52px); }
+
+  /* Footer */
+  .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* Cursor deshabilitado en touch */
+  #cursor { display: none; }
+  body { cursor: auto; }
+  a, button, [data-nav], [role="button"] { cursor: pointer; }
 }
