@@ -8,6 +8,11 @@
     en: {
       // Navbar
       nav_cta:           "Let's talk",
+      nav_home:          'Home',
+      nav_about:         'About',
+      nav_xoria:         'Xoria',
+      nav_work:          'Work',
+      nav_contact:       'Contact',
       // Hero
       badge:             'Applied Intelligence',
       h1_line1:          'Technology',
@@ -64,6 +69,11 @@
     es: {
       // Navbar
       nav_cta:           'Hablemos',
+      nav_home:          'Inicio',
+      nav_about:         'Nosotros',
+      nav_xoria:         'Xoria',
+      nav_work:          'Proyectos',
+      nav_contact:       'Contacto',
       // Hero
       badge:             'Inteligencia Aplicada',
       h1_line1:          'Tecnología',

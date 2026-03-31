@@ -45,10 +45,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   cursor: none;
-  display: flex; flex-direction: column;
-  min-height: 100vh;
 }
-#spa-root { flex: 1; }
+#spa-root { position: relative; z-index: 1; }
 h1,h2,h3,h4 { font-family: 'Questrial', system-ui, sans-serif; line-height: 1.1; }
 p { line-height: 1.7; color: var(--c-gray); }
 a { text-decoration: none; color: inherit; }
@@ -167,7 +165,6 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 /* ─────────────────────────────────────────
    SPA VIEWS
 ───────────────────────────────────────── */
-#spa-root { position: relative; z-index: 1; }
 .view {
   display: none;
   padding-top: var(--nav-h);
@@ -235,18 +232,6 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 }
 
 /* Capa frosted — efecto cristal sobre los nodos */
-.frosted-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(34,48,62,.55) 0%,
-    rgba(34,48,62,.20) 40%,
-    rgba(34,48,62,.50) 100%
-  );
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-}
-
 /* Contenido interior del hero — dos columnas */
 .hero-content {
   position: relative; z-index: 1;
