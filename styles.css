@@ -164,7 +164,7 @@ a, button, [data-nav], [role="button"] { cursor: none; }
 /* ─────────────────────────────────────────
    SPA VIEWS
 ───────────────────────────────────────── */
-#spa-root { position: relative; }
+#spa-root { position: relative; z-index: 1; }
 .view {
   display: none;
   min-height: 100vh;
@@ -189,15 +189,15 @@ a, button, [data-nav], [role="button"] { cursor: none; }
   overflow: hidden;
 }
 
-/* Ambiente de fondo */
-.hero-ambient {
-  position: absolute; inset: 0; pointer-events: none; z-index: 0;
-}
-
-/* Canvas de nodos */
+/* ─────────────────────────────────────────
+   CANVAS GLOBAL DE NODOS
+───────────────────────────────────────── */
 #nodesCanvas {
-  position: absolute; inset: 0;
+  position: fixed;
+  inset: 0;
   width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .orb {
@@ -578,6 +578,7 @@ h4 {
 .site-footer {
   border-top: 1px solid var(--c-white-04);
   padding: 24px 32px;
+  position: relative; z-index: 1;
 }
 .footer-inner {
   max-width: var(--w); margin: 0 auto;

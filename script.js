@@ -210,28 +210,33 @@
   /* ─────────────────────────────────────────
      NODOS TECH — canvas hero
   ───────────────────────────────────────── */
+  /* ─────────────────────────────────────────
+     NODOS TECH — canvas global (todas las páginas)
+  ───────────────────────────────────────── */
   function initNodes() {
     const canvas = document.getElementById('nodesCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    const NODES    = 68;
-    const MAX_DIST = 160;
-    const SPEED    = 0.28;
+    const NODES    = 90;
+    const MAX_DIST = 180;
+    const SPEED    = 0.5;
     let W, H, nodes;
 
     function resize() {
-      W = canvas.width  = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
     }
 
     function makeNode() {
+      const isOrange = Math.random() < 0.12; // 12% nodos naranja acento
       return {
-        x:  Math.random() * W,
-        y:  Math.random() * H,
-        vx: (Math.random() - .5) * SPEED,
-        vy: (Math.random() - .5) * SPEED,
-        r:  Math.random() * 1.6 + .6
+        x:       Math.random() * W,
+        y:       Math.random() * H,
+        vx:      (Math.random() - .5) * SPEED,
+        vy:      (Math.random() - .5) * SPEED,
+        r:       Math.random() * 2 + 1,
+        orange:  isOrange
       };
     }
 
@@ -250,12 +255,18 @@
           const dy   = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < MAX_DIST) {
-            const alpha = (1 - dist / MAX_DIST) * 0.18;
+            const t = 1 - dist / MAX_DIST;
+            // Línea naranja si alguno de los dos es naranja
+            const isHot = nodes[i].orange || nodes[j].orange;
+            const alpha = isHot ? t * 0.35 : t * 0.28;
+            const color = isHot
+              ? `rgba(249,128,88,${alpha})`
+              : `rgba(172,185,190,${alpha})`;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(172,185,190,${alpha})`;
-            ctx.lineWidth   = .8;
+            ctx.strokeStyle = color;
+            ctx.lineWidth   = isHot ? 1.2 : 0.9;
             ctx.stroke();
           }
         }
@@ -263,10 +274,21 @@
 
       // Puntos
       nodes.forEach(n => {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(172,185,190,0.45)';
-        ctx.fill();
+        if (n.orange) {
+          // Nodo naranja con glow
+          ctx.shadowColor = 'rgba(249,128,88,0.8)';
+          ctx.shadowBlur  = 10;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r + 1, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(249,128,88,0.85)';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(172,185,190,0.65)';
+          ctx.fill();
+        }
       });
     }
 
@@ -285,7 +307,7 @@
       requestAnimationFrame(loop);
     }
 
-    window.addEventListener('resize', () => { resize(); });
+    window.addEventListener('resize', resize, { passive: true });
     init();
     loop();
   }
