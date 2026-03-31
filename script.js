@@ -218,55 +218,62 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    const NODES    = 90;
-    const MAX_DIST = 180;
-    const SPEED    = 0.5;
+    const MAX_DIST = 120;  // distancia máxima de conexión — más corta = menos telaraña
+    const SPEED    = 0.3;
     let W, H, nodes;
 
-    function resize() {
+    // Distribuye nodos en una cuadrícula con jitter para que queden uniformes
+    function init() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
-    }
 
-    function makeNode() {
-      const isOrange = Math.random() < 0.12; // 12% nodos naranja acento
-      return {
-        x:       Math.random() * W,
-        y:       Math.random() * H,
-        vx:      (Math.random() - .5) * SPEED,
-        vy:      (Math.random() - .5) * SPEED,
-        r:       Math.random() * 2 + 1,
-        orange:  isOrange
-      };
-    }
+      // Calcula cuántos nodos caben según el área (1 cada ~18000px²)
+      const area    = W * H;
+      const count   = Math.round(area / 18000);
+      const NODES   = Math.max(18, Math.min(count, 55)); // entre 18 y 55
 
-    function init() {
-      resize();
-      nodes = Array.from({ length: NODES }, makeNode);
+      const cols = Math.ceil(Math.sqrt(NODES * W / H));
+      const rows = Math.ceil(NODES / cols);
+      const cellW = W / cols;
+      const cellH = H / rows;
+
+      nodes = [];
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          if (nodes.length >= NODES) break;
+          const isOrange = Math.random() < 0.1;
+          nodes.push({
+            // posición base centrada en la celda + jitter de hasta 30%
+            x:      (c + 0.5 + (Math.random() - .5) * 0.6) * cellW,
+            y:      (r + 0.5 + (Math.random() - .5) * 0.6) * cellH,
+            vx:     (Math.random() - .5) * SPEED,
+            vy:     (Math.random() - .5) * SPEED,
+            r:      Math.random() * 1.5 + 1,
+            orange: isOrange
+          });
+        }
+      }
     }
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
 
-      // Líneas entre nodos cercanos
+      // Líneas
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx   = nodes[i].x - nodes[j].x;
           const dy   = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < MAX_DIST) {
-            const t = 1 - dist / MAX_DIST;
-            // Línea naranja si alguno de los dos es naranja
+            const t     = 1 - dist / MAX_DIST;
             const isHot = nodes[i].orange || nodes[j].orange;
-            const alpha = isHot ? t * 0.35 : t * 0.28;
-            const color = isHot
-              ? `rgba(249,128,88,${alpha})`
-              : `rgba(172,185,190,${alpha})`;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = color;
-            ctx.lineWidth   = isHot ? 1.2 : 0.9;
+            ctx.strokeStyle = isHot
+              ? `rgba(249,128,88,${t * 0.30})`
+              : `rgba(172,185,190,${t * 0.22})`;
+            ctx.lineWidth = isHot ? 1.0 : 0.75;
             ctx.stroke();
           }
         }
@@ -275,18 +282,17 @@
       // Puntos
       nodes.forEach(n => {
         if (n.orange) {
-          // Nodo naranja con glow
-          ctx.shadowColor = 'rgba(249,128,88,0.8)';
-          ctx.shadowBlur  = 10;
+          ctx.shadowColor = 'rgba(249,128,88,0.7)';
+          ctx.shadowBlur  = 8;
           ctx.beginPath();
-          ctx.arc(n.x, n.y, n.r + 1, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(249,128,88,0.85)';
+          ctx.arc(n.x, n.y, n.r + 0.8, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(249,128,88,0.80)';
           ctx.fill();
           ctx.shadowBlur = 0;
         } else {
           ctx.beginPath();
           ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(172,185,190,0.65)';
+          ctx.fillStyle = 'rgba(172,185,190,0.55)';
           ctx.fill();
         }
       });
@@ -307,7 +313,7 @@
       requestAnimationFrame(loop);
     }
 
-    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('resize', () => { init(); }, { passive: true });
     init();
     loop();
   }
